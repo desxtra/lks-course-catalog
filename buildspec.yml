@@ -12,7 +12,7 @@ phases:
       - echo "Install Dependencies"
       - yum update -y
       - echo "Installing Docker..."
-      - amazon-linux-extras install docker -y # Installing Docker
+      - yum install docker -y # Installing Docker
       - service docker start
       - usermod -a -G docker ec2-user 
       - echo "Docker installed and started"
