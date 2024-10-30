@@ -4,6 +4,7 @@ env:
     ECR_REPO: lks/course-catalog
     ECR_REGION: us-east-1
     CONTAINER_NAME: lks-course-catalog
+    S3_BUCKET_NAME: lks-bebyschalke-smknega # Add this line
   parameter-store:
     AWS_ACCESS_KEY: /course-catalog/production/AWS_ACCESS_KEY
     AWS_SECRET_KEY: /course-catalog/production/AWS_SECRET_KEY
@@ -14,27 +15,25 @@ phases:
     commands:
       - echo "Install Dependencies"
       - yum update -y
-      - echo "Node.js v16 is already installed"
   pre_build:
     commands:
       - echo "Logging into ECR..."
       - aws ecr get-login-password --region $ECR_REGION | docker login --username AWS --password-stdin 834549009763.dkr.ecr.us-east-1.amazonaws.com
       - echo "Creating S3 bucket to store dkcfg to be deployed by Beanstalk..."
       - |
-        BUCKET_NAME="lks-bebyschalke-smknega"
-        if ! aws s3api head-bucket --bucket $BUCKET_NAME 2>/dev/null; then
+        if ! aws s3api head-bucket --bucket $S3_BUCKET_NAME 2>/dev/null; then
           echo "Bucket does not exist. Creating bucket..."
-          aws s3 mb s3://$BUCKET_NAME
+          aws s3 mb s3://$S3_BUCKET_NAME
         else
           echo "Bucket already exists. Skipping creation."
         fi
-      - aws s3 cp dkcfg s3://$BUCKET_NAME/
-      - aws s3 cp Dockerrun.aws.json s3://$BUCKET_NAME/
+      - aws s3 cp dkcfg s3://$S3_BUCKET_NAME/
+      - aws s3 cp Dockerrun.aws.json s3://$S3_BUCKET_NAME/
   build:
     commands:
       - echo "Running unit tests..."
       - npm install
-      - npm run test 
+      - npm run test || { echo "Tests failed"; exit 1; } # Exit if tests fail
       - echo "Building the Docker image..."
       - docker build -t lks-catalog/bebyschalke:latest .
   post_build:
