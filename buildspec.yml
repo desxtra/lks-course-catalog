@@ -4,6 +4,9 @@ env: # Create the environment
     ECR_REPO: lks/course-catalog
     ECR_REGION: us-east-1
     CONTAINER_NAME: lks-course-catalog
+  parameter-store:
+    AWS_ACCESS_KEY: /course-catalog/production/AWS_ACCESS_KEY
+    AWS_SECRET_KEY: /course-catalog/production/AWS_SECRET_KEY
 phases:
   install: # Install runtime
     runtime-versions:
