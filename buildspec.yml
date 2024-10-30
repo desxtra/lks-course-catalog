@@ -8,7 +8,6 @@ phases:
   install: # Install runtime
     runtime-versions:
       nodejs: 16
-      docker: 20
     commands:
       - echo "Install Dependencies"
       - yum update -y
