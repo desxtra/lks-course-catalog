@@ -1,5 +1,5 @@
 version: 0.2
-env: # Create the environment
+env:
   variables:
     ECR_REPO: lks/course-catalog
     ECR_REGION: us-east-1
@@ -8,23 +8,18 @@ env: # Create the environment
     AWS_ACCESS_KEY: /course-catalog/production/AWS_ACCESS_KEY
     AWS_SECRET_KEY: /course-catalog/production/AWS_SECRET_KEY
 phases:
-  install: # Install runtime
+  install:
     runtime-versions:
       nodejs: 16
     commands:
       - echo "Install Dependencies"
       - yum update -y
-      - echo "Installing Docker..."
-      - yum install docker -y # Installing Docker 
-      - echo "Docker installed"
-      - echo "Installing nodejs v16..." # Installing nodejs v16
-      - curl -sL https://rpm.nodesource.com/setup_16.x | bash -
-      - yum install -y nodejs
-  pre_build: # You must use this phase for installing dependencies and login into ECR
-    commands: # Run your pre-build script here
-      - echo "Logging into ECR..." # Login into ECR
-      - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 834549009763.dkr.ecr.us-east-1.amazonaws.com
-      - echo "Create s3 bucket to store dkcfg to be deployed by beanstalk..."
+      - echo "Node.js v16 is already installed"
+  pre_build:
+    commands:
+      - echo "Logging into ECR..."
+      - aws ecr get-login-password --region $ECR_REGION | docker login --username AWS --password-stdin 834549009763.dkr.ecr.us-east-1.amazonaws.com
+      - echo "Creating S3 bucket to store dkcfg to be deployed by Beanstalk..."
       - |
         BUCKET_NAME="lks-bebyschalke-smknega"
         if ! aws s3api head-bucket --bucket $BUCKET_NAME 2>/dev/null; then
@@ -33,36 +28,28 @@ phases:
         else
           echo "Bucket already exists. Skipping creation."
         fi
-      - aws s3 cp dkcfg s3://lks-bebyschalke-smknega/
-      - aws s3 cp Dockerrun.aws.json s3://lks-bebyschalke-smknega/ 
-  build: # In This phase you must Run Unit testing and Build an image from Dockerfile
+      - aws s3 cp dkcfg s3://$BUCKET_NAME/
+      - aws s3 cp Dockerrun.aws.json s3://$BUCKET_NAME/
+  build:
     commands:
-      - echo "Run unit testing and build docker image"
-      - echo "Run unit Test..." # Run unit test
+      - echo "Running unit tests..."
       - npm install
-      - npm run test 
-      - echo "Showing testing result..." # Show testing result
-      - npm install 
-      - npm run testdev
-      - echo "Run the server..." # Run course catalog that run in nodejs v16
-      - npm install
-      - npm run start
-      - docker build -t lks-catalog/bebyschalke .
-  post_build: # In this phase you must push the image to ECR and create an image definition
-    commands: # Run your post-build script here
-      - echo "push the image to ECR.." # Tag and push image to ECR
+      - npm run test || { echo "Tests failed"; exit 1; } # Exit if tests fail
+      - echo "Building the Docker image..."
+      - docker build -t lks-catalog/bebyschalke:latest .
+  post_build:
+    commands:
+      - echo "Pushing the image to ECR..."
       - docker tag lks-catalog/bebyschalke:latest 834549009763.dkr.ecr.us-east-1.amazonaws.com/lks-catalog/bebyschalke:latest
       - docker push 834549009763.dkr.ecr.us-east-1.amazonaws.com/lks-catalog/bebyschalke:latest
       - echo "Image has been pushed into ECR..."
-      - echo "Run Docker on port 8080:8000..." # Run docker
-      - docker run -d -p 8080:8000 --name=course-catalog-container lks-catalog/bebyschalke:latest
       - printf '[{"name":"%s","imageUri":"%s"}]' $CONTAINER_NAME ${ECR_REPO}:latest > imagedefinitions.json
-      - echo "build complete.."
-reports: # Report file
+      - echo "Build complete."
+reports:
   test-report:
     files:
       - 'report/test-result.xml'
     file-format: JUNITXML
-artifacts: # Output artifact will generate build
+artifacts:
   files:
     - imagedefinitions.json
