@@ -58,25 +58,6 @@ phases:
       - docker run -d -p 8080:8000 --name=course-catalog-container lks-catalog/bebyschalke:latest
       - printf '[{"name":"%s","imageUri":"%s"}]' $CONTAINER_NAME ${ECR_REPO}:latest > imagedefinitions.json
       - echo "build complete.."
-  deploy: # deploy to beanstalk
-    commands:
-      - echo "Deploying to AWS Elastic Beanstalk..."
-      - |
-        APPLICATION_NAME="lks-catalog-course"
-        ENVIRONMENT_NAME="production"
-        S3_BUCKET="lks-bebyschalke-smknega"
-        S3_KEY="your-config-file-in-bucket/Dockerrun.aws.json"
-
-        # Upload Dockerrun.aws.json to S3
-        aws s3 cp Dockerrun.aws.json s3://$S3_BUCKET/$S3_KEY
-
-        # Create a new application version
-        aws elasticbeanstalk create-application-version --application $APPLICATION_NAME --version-label v1 --source-bundle S3Bucket=$S3_BUCKET,S3Key=$S3_KEY
-
-        # Update the environment to use the new application version
-        aws elasticbeanstalk update-environment --environment-name $ENVIRONMENT_NAME --version-label v1
-
-      - echo "Deployment to Elastic Beanstalk completed successfully."
 reports: # Report file
   test-report:
     files:
