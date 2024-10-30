@@ -29,7 +29,7 @@ phases:
         BUCKET_NAME="your-bucket-name"
         if ! aws s3api head-bucket --bucket $BUCKET_NAME 2>/dev/null; then
           echo "Bucket does not exist. Creating bucket..."
-          aws s3 mb s3://$BUCKET_NAME
+          aws s3 mb s3://$lks-bebyschalke-smknega
         else
           echo "Bucket already exists. Skipping creation."
         fi
