@@ -43,6 +43,8 @@ phases:
       - docker tag lks-catalog/bebyschalke:latest 834549009763.dkr.ecr.us-east-1.amazonaws.com/lks-catalog/bebyschalke:latest
       - docker push 834549009763.dkr.ecr.us-east-1.amazonaws.com/lks-catalog/bebyschalke:latest
       - echo "Image has been pushed into ECR..."
+      - echo "Run Docker on port 8080:8000..." # Run docker
+      - docker run -d -p 8080:8000 --name=course-catalog-container lks-catalog/bebyschalke:latest
       - printf '[{"name":"%s","imageUri":"%s"}]' $CONTAINER_NAME ${ECR_REPO}:latest > imagedefinitions.json
       - echo "build complete.."
 reports: # Report file
