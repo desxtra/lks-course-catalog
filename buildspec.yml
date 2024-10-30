@@ -34,7 +34,7 @@ phases:
     commands:
       - echo "Running unit tests..."
       - npm install
-      - npm run test || { echo "Tests failed"; exit 1; } # Exit if tests fail
+      - npm run test 
       - echo "Building the Docker image..."
       - docker build -t lks-catalog/bebyschalke:latest .
   post_build:
