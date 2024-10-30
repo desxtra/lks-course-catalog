@@ -34,7 +34,7 @@ phases:
           echo "Bucket already exists. Skipping creation."
         fi
       - aws s3 cp dkcfg s3://lks-bebyschalke-smknega/
-      - aws s3 cp Dockerrun.aws.jsons s3://lks-bebyschalke-smknega/ 
+      - aws s3 cp Dockerrun.aws.json s3://lks-bebyschalke-smknega/ 
   build: # In This phase you must Run Unit testing and Build an image from Dockerfile
     commands:
       - echo "Run unit testing and build docker image"
