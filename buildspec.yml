@@ -12,10 +12,8 @@ phases:
       - echo "Install Dependencies"
       - yum update -y
       - echo "Installing Docker..."
-      - yum install docker -y # Installing Docker
-      - service docker start
-      - usermod -a -G docker ec2-user 
-      - echo "Docker installed and started"
+      - yum install docker -y # Installing Docker 
+      - echo "Docker installed"
       - echo "Installing nodejs v16..." # Installing nodejs v16
       - curl -sL https://rpm.nodesource.com/setup_16.x | bash -
       - yum install -y nodejs
