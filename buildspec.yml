@@ -26,10 +26,10 @@ phases:
       - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 834549009763.dkr.ecr.us-east-1.amazonaws.com
       - echo "Create s3 bucket to store dkcfg to be deployed by beanstalk..."
       - |
-        BUCKET_NAME="your-bucket-name"
+        BUCKET_NAME="lks-bebyschalke-smknega"
         if ! aws s3api head-bucket --bucket $BUCKET_NAME 2>/dev/null; then
           echo "Bucket does not exist. Creating bucket..."
-          aws s3 mb s3://$lks-bebyschalke-smknega
+          aws s3 mb s3://$BUCKET_NAME
         else
           echo "Bucket already exists. Skipping creation."
         fi
