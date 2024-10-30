@@ -1,0 +1,16 @@
+{
+    "AWSEBDockerrunVersion": "1",
+    "Authentication": {
+       "Bucket": "YOUR_BUCKET", 
+       "Key": "YOUR_CONFIG_FILE_IN_BUCKET"
+    },
+    "Image": {
+       "Name": "lks-catalog/bebyschalke"
+    },
+    "Ports": [
+       {
+          "ContainerPort": 8000,
+          "HostPort": 80
+       }
+    ]
+ }
