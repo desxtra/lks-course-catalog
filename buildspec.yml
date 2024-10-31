@@ -7,7 +7,7 @@ env:
     S3_BUCKET_NAME: lks-bebyschalke-smknega
     AWS_BUCKET_NAME: lks-bebyschalke-smknega
     DB_HOST: lks-database.cxgwabmtaqxz.us-east-1.rds.amazonaws.com
-    DB_NAME: lks-postgres
+    DB_NAME: lks_postgres
     DB_PASSWORD: lkspassword
   parameter-store:
     AWS_ACCESS_KEY: /course-catalog/production/AWS_ACCESS_KEY
