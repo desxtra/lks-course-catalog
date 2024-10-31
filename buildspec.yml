@@ -6,7 +6,7 @@ env:
     CONTAINER_NAME: lks-course-catalog
     S3_BUCKET_NAME: lks-bebyschalke-smknega
     AWS_BUCKET_NAME: lks-bebyschalke-smknega
-    DB_HOST: lks-database.cxgwabmtaqxz.us-east-1.rds.amazonaws.com
+    DB_HOST: lks-database.cluster-ro-cxgwabmtaqxz.us-east-1.rds.amazonaws.com # Reader unit
     DB_NAME: lks_postgres
     DB_PASSWORD: lkspassword
   parameter-store:
