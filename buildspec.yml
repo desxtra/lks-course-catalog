@@ -4,7 +4,7 @@ env:
     ECR_REPO: lks/course-catalog
     ECR_REGION: us-east-1
     CONTAINER_NAME: lks-course-catalog
-    S3_BUCKET_NAME: lks-bebyschalke-smknega # Add this line
+    S3_BUCKET_NAME: lks-bebyschalke-smknega
   parameter-store:
     AWS_ACCESS_KEY: /course-catalog/production/AWS_ACCESS_KEY
     AWS_SECRET_KEY: /course-catalog/production/AWS_SECRET_KEY
@@ -33,7 +33,7 @@ phases:
     commands:
       - echo "Running unit tests..."
       - npm install
-      - npm run test || { echo "Tests failed"; exit 1; } # Exit if tests fail
+      - npm run test 
       - echo "Building the Docker image..."
       - docker build -t lks-catalog/bebyschalke:latest .
   post_build:
@@ -51,4 +51,4 @@ reports:
     file-format: JUNITXML
 artifacts:
   files:
-    - imagedefinitions.json
+    - imagedefinitions.json           
