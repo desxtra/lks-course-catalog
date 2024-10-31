@@ -5,6 +5,7 @@ env:
     ECR_REGION: us-east-1
     CONTAINER_NAME: lks-course-catalog
     S3_BUCKET_NAME: lks-bebyschalke-smknega
+    AWS_BUCKET_NAME: lks-bebyschalke-smknega
   parameter-store:
     AWS_ACCESS_KEY: /course-catalog/production/AWS_ACCESS_KEY
     AWS_SECRET_KEY: /course-catalog/production/AWS_SECRET_KEY
@@ -31,6 +32,9 @@ phases:
       - aws s3 cp Dockerrun.aws.json s3://$S3_BUCKET_NAME/
   build:
     commands:
+      - echo "Starting PostgreSQL container..."
+      - docker run --name postgres -e POSTGRES_USER=lks-postgres -e POSTGRES_PASSWORD=passwordlks -e POSTGRES_DB=lks-db-postgres -p 5432:5432 -d postgres
+      - sleep 10 # Wait for the database to start
       - echo "Running unit tests..."
       - npm install
       - npm run test 
