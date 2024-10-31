@@ -40,7 +40,8 @@ phases:
       - npm run test 
       - echo "Building the Docker image..."
       - docker build -t lks-catalog/bebyschalke:latest .
-      - docker run -d -p 8080:8000 --name=lks-catalog/bebyschalke:latest
+      - echo "Running the Docker container..."
+      - docker run -d -p 8080:8000 --name lks-catalog lks-catalog/bebyschalke:latest
   post_build:
     commands:
       - echo "Pushing the image to ECR..."
