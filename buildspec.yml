@@ -11,7 +11,7 @@ env:
     AWS_BUCKET_REGION: /course-catalog/production/AWS_BUCKET_REGION
     DB_NAME: /course-catalog/production/DB_NAME
     DB_PASSWORD: /course-catalog/production/DB_PASSWORD
-    DB_HOST: /course-catalog/production/DB_HOST # write unit
+    DB_HOST: /course-catalog/production/DB_HOST # write unit host
 phases:
   install:
     runtime-versions:
