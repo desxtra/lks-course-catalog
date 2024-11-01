@@ -1,7 +1,7 @@
 version: 0.2
 env:
   variables:
-    ECR_REPO: lks-catalog/bebyschalke
+    ECR_REPO: 834549009763.dkr.ecr.us-east-1.amazonaws.com/lks-catalog/bebyschalke
     ECR_REGION: us-east-1
     CONTAINER_NAME: bebyschalke
 
@@ -56,8 +56,6 @@ phases:
       - echo "Image has been pushed into ECR..."
       - printf '[{"name":"%s","imageUri":"%s "}]' $CONTAINER_NAME ${ECR_REPO}:latest > imagedefinitions.json
       - echo "Build complete."
-      - docker rm -f lks-catalog || true
-      - docker rmi lks-catalog/bebyschalke:latest || true
 
 reports:
   test-report:
