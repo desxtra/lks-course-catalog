@@ -4,6 +4,7 @@ env:
     ECR_REPO: lks-catalog/bebyschalke
     ECR_REGION: us-east-1
     CONTAINER_NAME: bebyschalke
+    S3_BUCKET_NAME: your-s3-bucket-name # Add this variable if needed
   parameter-store:
     AWS_ACCESS_KEY: /course-catalog/production/AWS_ACCESS_KEY
     AWS_SECRET_KEY: /course-catalog/production/AWS_SECRET_KEY
@@ -12,6 +13,7 @@ env:
     DB_NAME: /course-catalog/production/DB_NAME
     DB_PASSWORD: /course-catalog/production/DB_PASSWORD
     DB_HOST: /course-catalog/production/DB_HOST # write unit host
+
 phases:
   install:
     runtime-versions:
@@ -19,42 +21,65 @@ phases:
     commands:
       - echo "Install Dependencies"
       - yum update -y
+
   pre_build:
     commands:
       - echo "Logging into ECR..."
-      - aws ecr get-login-password --region $ECR_REGION | docker login --username AWS --password-stdin 834549009763.dkr.ecr.us-east-1.amazonaws.com
+      - aws ecr get-login-password --region $ECR_REGION | docker login --username AWS --password-stdin 834549009763.dkr.ecr.us-east-1.amazonaws.com || { echo "ECR login failed"; exit 1; }
       - echo "Creating S3 bucket to store dkcfg to be deployed by Beanstalk..."
       - |
-        if ! aws s3api head-bucket --bucket $S3_BUCKET_NAME 2>/dev/null; then
+        if ! aws s3api head-bucket --bucket $AWS_BUCKET_NAME 2>/dev/null; then
           echo "Bucket does not exist. Creating bucket..."
-          aws s3 mb s3://$AWS_BUCKET_NAME
+          aws s3 mb s3://$AWS_BUCKET_NAME || { echo "Failed to create S3 bucket"; exit 1; }
         else
           echo "Bucket already exists. Skipping creation."
         fi
-      - aws s3 cp dkcfg s3://$AWS_BUCKET_NAME
-      - aws s3 cp Dockerrun.aws.json s3://$AWS_BUCKET_NAME
+      - aws s3 cp dkcfg s3://$AWS_BUCKET_NAME || { echo "Failed to upload dkcfg"; exit 1; }
+      - aws s3 cp Dockerrun.aws.json s3://$AWS_BUCKET_NAME || { echo "Failed to upload Dockerrun.aws.json"; exit 1; }
+
   build:
     commands:
       - echo "Running unit tests..."
       - npm install
-      - npm run test 
+      - npm run test || { echo "Unit tests failed"; exit 1; }
       - echo "Building the Docker image..."
-      - docker build -t lks-catalog/bebyschalke:latest .
+      - docker build -t lks-catalog/bebyschalke:latest . || { echo "Docker build failed"; exit 1; }
       - echo "Running the Docker container..."
-      - docker run -d -p 8080:8000 --name lks-catalog lks-catalog/bebyschalke:latest
+      - docker run -d -p 8080:8000 --name lks-catalog lks-catalog/bebyschalke:latest || { echo "Docker container failed to run"; exit 1; }
+
+      # Instructions for running the Course Catalog Service
+      - echo "Instructions for running the Course Catalog Service:"
+      - echo "Run Unit Tests:"
+      - echo "1. Install Dependencies: npm install"
+      - echo "2. Run Tests: npm run test (Generates test-result.xml in report folder)"
+      - echo "3. Optional: View Results in Terminal: npm run testdev"
+      - echo ""
+      - echo "Run the Server:"
+      - echo "1. Install Dependencies (if not already done): npm install"
+      - echo "2. Start the Server: npm run start"
+      - echo ""
+      - echo "Run with Docker:"
+      - echo "1. Build the Docker Image: docker build -t <name_tag> ."
+      - echo "2. Run the Docker Container: docker run -d -p 8080:8000 --name=course-catalog-container <name_tag>"
+      - echo "3. Verify API: Open http://127.0.0.1:8080 in your browser."
+
   post_build:
     commands:
       - echo "Pushing the image to ECR..."
-      - docker tag lks-catalog/bebyschalke:latest 834549009763.dkr.ecr.us-east-1.amazonaws.com/lks-catalog/bebyschalke:latest
-      - docker push 834549009763.dkr.ecr.us-east-1.amazonaws.com/lks-catalog/bebyschalke:latest
+      - docker tag lks-catalog/bebyschalke:latest 834549009763.dkr.ecr.us-east-1.amazonaws.com/lks-catalog/bebyschalke:latest || { echo "Failed to tag Docker image"; exit 1; }
+      - docker push 834549009763.dkr.ecr.us-east-1.amazonaws.com/lks-catalog/bebyschalke:latest || { echo "Failed to push Docker image to ECR"; exit 1; }
       - echo "Image has been pushed into ECR..."
-      - printf '[{"name":"%s","imageUri":"%s"}]' $CONTAINER_NAME ${ECR_REPO}:latest > imagedefinitions.json
+      - printf '[{"name":"%s","imageUri":"%s "}]' $CONTAINER_NAME ${ECR_REPO}:latest > imagedefinitions.json
       - echo "Build complete."
+      - docker rm -f lks-catalog || true
+      - docker rmi lks-catalog/bebyschalke:latest || true
+
 reports:
   test-report:
     files:
       - 'report/test-result.xml'
     file-format: JUNITXML
+
 artifacts:
   files:
-    - imagedefinitions.json           
+    - imagedefinitions.json
