@@ -27,12 +27,12 @@ phases:
       - |
         if ! aws s3api head-bucket --bucket $S3_BUCKET_NAME 2>/dev/null; then
           echo "Bucket does not exist. Creating bucket..."
-          aws s3 mb s3://$S3_BUCKET_NAME
+          aws s3 mb s3://$AWS_BUCKET_NAME
         else
           echo "Bucket already exists. Skipping creation."
         fi
-      - aws s3 cp dkcfg s3://$S3_BUCKET_NAME/
-      - aws s3 cp Dockerrun.aws.json s3://$S3_BUCKET_NAME/
+      - aws s3 cp dkcfg s3://$AWS_BUCKET_NAME
+      - aws s3 cp Dockerrun.aws.json s3://$AWS_BUCKET_NAME
   build:
     commands:
       - echo "Running unit tests..."
