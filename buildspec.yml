@@ -1,21 +1,22 @@
 version: 0.2
 env:
   variables:
-    ECR_REPO: lks/course-catalog
+    ECR_REPO: lks-catalog/bebyschalke
     ECR_REGION: us-east-1
-    CONTAINER_NAME: lks-course-catalog
-    S3_BUCKET_NAME: lks-bebyschalke-smknega
-    AWS_BUCKET_NAME: lks-bebyschalke-smknega
-    DB_HOST: lks-database.cluster-ro-cxgwabmtaqxz.us-east-1.rds.amazonaws.com # Reader unit
-    DB_NAME: lks_postgres
-    DB_PASSWORD: lkspassword
+    CONTAINER_NAME: bebyschalke
   parameter-store:
     AWS_ACCESS_KEY: /course-catalog/production/AWS_ACCESS_KEY
     AWS_SECRET_KEY: /course-catalog/production/AWS_SECRET_KEY
+    AWS_BUCKET_NAME: /course-catalog/production/AWS_BUCKET_NAME
+    AWS_BUCKET_REGION: /course-catalog/production/AWS_BUCKET_REGION
+    DB_NAME: /course-catalog/production/DB_NAME
+    DB_PASSWORD: /course-catalog/production/DB_PASSWORD
+    DB_HOST: /course-catalog/production/DB_HOST # write unit
 phases:
   install:
     runtime-versions:
       nodejs: 16
+      docker: 20
     commands:
       - echo "Install Dependencies"
       - yum update -y
