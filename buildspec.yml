@@ -4,7 +4,7 @@ env:
     ECR_REPO: lks-catalog/bebyschalke
     ECR_REGION: us-east-1
     CONTAINER_NAME: bebyschalke
-    S3_BUCKET_NAME: your-s3-bucket-name # Add this variable if needed
+
   parameter-store:
     AWS_ACCESS_KEY: /course-catalog/production/AWS_ACCESS_KEY
     AWS_SECRET_KEY: /course-catalog/production/AWS_SECRET_KEY
@@ -40,27 +40,13 @@ phases:
   build:
     commands:
       - echo "Running unit tests..."
-      - npm install
-      - npm run test || { echo "Unit tests failed"; exit 1; }
-      - echo "Building the Docker image..."
-      - docker build -t lks-catalog/bebyschalke:latest . || { echo "Docker build failed"; exit 1; }
-      - echo "Running the Docker container..."
-      - docker run -d -p 8080:8000 --name lks-catalog lks-catalog/bebyschalke:latest || { echo "Docker container failed to run"; exit 1; }
-      # Instructions for running the Course Catalog Service
-      - echo "Instructions for running the Course Catalog Service:"
-      - echo "Run Unit Tests:"
-      - echo "1. Install Dependencies: npm install"
-      - echo "2. Run Tests: npm run test (Generates test-result.xml in report folder)"
-      - echo "3. Optional: View Results in Terminal: npm run testdev"
-      - echo ""
-      - echo "Run the Server:"
-      - echo "1. Install Dependencies (if not already done): npm install"
-      - echo "2. Start the Server: npm run start"
-      - echo ""
-      - echo "Run with Docker:"
-      - echo "1. Build the Docker Image: docker build -t lks-catalog/bebyschalke:latest ."
-      - echo "2. Run the Docker Container: docker run -d -p 8080:8000 --name=course-catalog-container lks-catalog/bebyschalke:latest"
-      - echo "3. Verify API: Open http://127.0.0.1:8080 in your browser."
+      - npm install # Run unit test
+      - npm run test 
+      - npm run testdev
+      - npm install # Run the server
+      - npm run start
+      - docker build -t lks-catalog/bebyschalke:latest . # Run with docker
+      - docker run -d -p 8080:8000 --name=course-catalog-container lks-catalog/bebyschalke:latest
 
   post_build:
     commands:
