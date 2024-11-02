@@ -39,6 +39,8 @@ phases:
 
   build:
     commands:
+      - echo "Starting docker..."
+      - systemctl start docker
       - echo "Running unit tests..."
       - npm install # Run unit test
       - npm run test 
