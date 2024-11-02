@@ -39,14 +39,13 @@ phases:
 
   build:
     commands:
-      - echo "Starting docker..."
-      - systemctl start docker
       - echo "Running unit tests..."
       - npm install # Run unit test
       - npm run test 
       - npm run testdev
       - npm install # Run the server
       - npm run start
+      - echo "Building docker images..."
       - docker build -t lks-catalog/bebyschalke:latest . # Run with docker
       - docker run -d -p 8080:8000 --name=course-catalog-container lks-catalog/bebyschalke:latest
 
