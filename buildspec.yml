@@ -10,9 +10,6 @@ env:
     AWS_SECRET_KEY: /course-catalog/production/AWS_SECRET_KEY
     AWS_BUCKET_NAME: /course-catalog/production/AWS_BUCKET_NAME
     AWS_BUCKET_REGION: /course-catalog/production/AWS_BUCKET_REGION
-    DB_NAME: /course-catalog/production/DB_NAME
-    DB_PASSWORD: /course-catalog/production/DB_PASSWORD
-    DB_HOST: /course-catalog/production/DB_HOST # write unit host
 
 phases:
   install:
@@ -39,12 +36,6 @@ phases:
 
   build:
     commands:
-      - echo "Running unit tests..."
-      - npm install # Run unit test
-    #  - npm run test 
-    #  - npm run testdev
-    #  - npm install # Run the server
-    #  - npm run start
       - echo "Building docker images..."
       - docker build -t lks-catalog/bebyschalke:latest . # Run with docker
       - docker run -d -p 8080:8000 --name=course-catalog-container lks-catalog/bebyschalke:latest
