@@ -2,7 +2,7 @@
     "AWSEBDockerrunVersion": "1",
     "Authentication": {
        "Bucket": "lks-bebyschalke-smknega", 
-       "Key": "config.json"
+       "Key": "dkcfg"
     },
     "Image": {
        "Name": "lks-catalog/bebyschalke"
