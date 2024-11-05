@@ -52,3 +52,5 @@ reports:
 artifacts:
   files:
     - imagedefinitions.json
+    - Dockerfile
+    - Dockerrun.aws.json
