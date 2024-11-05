@@ -1,0 +1,14 @@
+{
+    "option_settings": [
+      {
+        "namespace": "aws:elasticbeanstalk:application:environment",
+        "option_name": "AWS_ACCESS_KEY_ID",
+        "value": "{{resolve:ssm-secure:/course-catalog/production/AWS_ACCESS_KEY}}"
+      },
+      {
+        "namespace": "aws:elasticbeanstalk:application:environment",
+        "option_name": "AWS_SECRET_ACCESS_KEY",
+        "value": "{{resolve:ssm-secure:/course-catalog/production/AWS_SECRET_KEY}}"
+      }
+    ]
+  }
