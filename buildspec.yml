@@ -60,3 +60,4 @@ artifacts:
     - Dockerrun.aws.json
     - package.json
     - app.js
+    - env.js
