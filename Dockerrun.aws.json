@@ -1,16 +1,26 @@
 {
-    "AWSEBDockerrunVersion": "1",
-    "Authentication": {
-       "Bucket": "lks-bebyschalke-smknega", 
-       "Key": "dkcfg"
-    },
-    "Image": {
-       "Name": "lks-catalog/bebyschalke"
-    },
-    "Ports": [
-       {
-          "ContainerPort": 8000,
-          "HostPort": 80
-       }
-    ]
- }
+   "AWSEBDockerrunVersion": "1",
+   "Authentication": {
+      "Bucket": "lks-bebyschalke-smknega",
+      "Key": "dkcfg"
+   },
+   "Image": {
+      "Name": "lks-catalog/bebyschalke"
+   },
+   "Ports": [
+      {
+         "ContainerPort": 8000,
+         "HostPort": 80
+      }
+   ],
+   "Environment": [
+      {
+         "Name": "AWS_ACCESS_KEY_ID",
+         "Value": "{{resolve:ssm-secure:/course-catalog/production/AWS_ACCESS_KEY}}"
+      },
+      {
+         "Name": "AWS_SECRET_ACCESS_KEY",
+         "Value": "{{resolve:ssm-secure:/course-catalog/production/AWS_SECRET_KEY}}"
+      }
+   ]
+}
