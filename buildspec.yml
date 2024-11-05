@@ -10,6 +10,8 @@ env:
     AWS_SECRET_KEY: /course-catalog/production/AWS_SECRET_KEY
     AWS_BUCKET_NAME: /course-catalog/production/AWS_BUCKET_NAME
     AWS_BUCKET_REGION: /course-catalog/production/AWS_BUCKET_REGION
+    DOCKER_PASSWORD: /course-catalog/production/DOCKER_PASSWORD
+    DOCKER_USERNAME: /course-catalog/production/DOCKER_USERNAME
 
 phases:
   install:
@@ -23,6 +25,8 @@ phases:
     commands:
       - echo "Logging into ECR..."
       - aws ecr get-login-password --region $ECR_REGION | docker login --username AWS --password-stdin 834549009763.dkr.ecr.us-east-1.amazonaws.com || echo "ECR login failed"
+      - echo "Logging into Docker Hub..."
+      - echo $DOCKER_PASSWORD | docker login --username $DOCKER_USERNAME --password-stdin
       - echo "Creating S3 bucket to store dkcfg to be deployed by Beanstalk..."
       - aws s3 mb s3://$AWS_BUCKET_NAME || echo "Bucket already exist or failed to create"
       - aws s3 cp dkcfg s3://$AWS_BUCKET_NAME || echo "Failed to upload dkcfg"
