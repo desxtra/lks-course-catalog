@@ -35,7 +35,7 @@ phases:
   build:
     commands:
       - echo "Building docker images..."
-      - docker build -t lks-catalog/bebyschalke:latest . # Run with docker
+      - docker build -t lks-catalog/bebyschalke:latest .
       - docker run -d -p 8080:8000 --name=course-catalog-container lks-catalog/bebyschalke:latest
 
   post_build:
@@ -59,3 +59,4 @@ artifacts:
     - Dockerfile
     - Dockerrun.aws.json
     - package.json
+    - app.js
