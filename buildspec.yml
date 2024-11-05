@@ -54,3 +54,4 @@ artifacts:
     - imagedefinitions.json
     - Dockerfile
     - Dockerrun.aws.json
+    - package.json
