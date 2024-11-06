@@ -5,7 +5,7 @@
       "Key": "dkcfg"
    },
    "Image": {
-      "Name": "lks-catalog/bebyschalke"
+      "Name": "834549009763.dkr.ecr.us-east-1.amazonaws.com/lks-catalog/bebyschalke:latest"
    },
    "Ports": [
       {
