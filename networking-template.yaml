@@ -254,24 +254,18 @@ Resources:
       GroupDescription: Security Group for ECS Cluster
       VpcId: !Ref VPC
       SecurityGroupIngress:
-        # Allow ECS tasks to communicate with catalog service on port 8080
         - IpProtocol: tcp
           FromPort: 8080
           ToPort: 8080
           SourceSecurityGroupId: !Ref CatalogSecurityGroup
-
-        # Allow ECS tasks to communicate with order service on port 8081
         - IpProtocol: tcp
           FromPort: 8081
           ToPort: 8081
           SourceSecurityGroupId: !Ref OrderSecurityGroup
-
-        # Allow ECS tasks to connect to PostgreSQL on port 5432
         - IpProtocol: tcp
           FromPort: 5432
           ToPort: 5432
-          SourceSecurityGroupId: !Ref LKSPostgresSG
-          
+          SourceSecurityGroupId: !Ref LKSPostgresSG          
       Tags:
         - Key: LKS
           Value: EcsClusterSecurityGroup
