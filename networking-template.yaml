@@ -317,4 +317,3 @@ Resources:
             Tags:
               - Key: LKS
                 Value: !Sub ${EnvironmentName} Instance
-`
