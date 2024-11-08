@@ -262,10 +262,6 @@ Resources:
           FromPort: 8081
           ToPort: 8081
           SourceSecurityGroupId: !Ref OrderSecurityGroup
-        - IpProtocol: tcp
-          FromPort: 5432
-          ToPort: 5432
-          SourceSecurityGroupId: !Ref LKSPostgresSG          
       Tags:
         - Key: LKS
           Value: EcsClusterSecurityGroup
@@ -275,14 +271,20 @@ Resources:
     Properties:
       GroupDescription: Security Group for PostgreSQL
       VpcId: !Ref VPC
-      SecurityGroupIngress:
-        - IpProtocol: tcp
-          FromPort: 5432
-          ToPort: 5432
-          SourceSecurityGroupId: !Ref EcsClusterSG
       Tags:
         - Key: LKS
           Value: PostgresSecurityGroup
+
+  # Separate ingress rule for ECS Cluster to access PostgreSQL on port 5432
+  PostgresAccessForECS:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      IpProtocol: tcp
+      FromPort: 5432
+      ToPort: 5432
+      GroupId: !Ref LKSPostgresSG
+      SourceSecurityGroupId: !Ref EcsClusterSG
+
 
 
   ### VPC ENDPOINT FOR PRIVATELINK ###
