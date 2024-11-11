@@ -55,8 +55,3 @@ reports:
 artifacts:
   files:
     - imagedefinitions.json
-    - Dockerfile
-    - Dockerrun.aws.json
-    - package.json
-    - app.js
-    - env.js
