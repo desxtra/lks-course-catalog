@@ -357,4 +357,4 @@ Resources:
     Type: Custom::S3BucketCleanup
     Properties:
       ServiceToken: !GetAtt BucketCleanupLambda.Arn
-      BucketName: !Ref MyS3Bucket
+      BucketName: !Ref LKS_S3_Bucket
