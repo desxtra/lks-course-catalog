@@ -38,7 +38,7 @@ phases:
       - docker tag lks/schalke:latest 834549009763.dkr.ecr.us-east-1.amazonaws.com/lks/schalke:latest || echo "Failed to tag Docker image"
       - docker push 834549009763.dkr.ecr.us-east-1.amazonaws.com/lks/schalke:latest || { echo "Failed to push Docker image to ECR"; exit 1; }
       - echo "Image has been pushed into ECR..."
-      - printf '[{"name":"%s","imageUri":"%s "}]' $CONTAINER_NAME ${ECR_REPO}:latest > imagedefinitions.json
+      - printf '[{"name":"%s","imageUri":"%s"}]' $CONTAINER_NAME ${ECR_REPO}:latest > imagedefinitions.json
       - echo "Build complete."
 
 reports:
