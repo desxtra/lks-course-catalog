@@ -297,19 +297,64 @@ Resources:
         - !Ref PrivateRouteTable2
       VpcEndpointType: Gateway
 
-  ### LAUNCH TEMPLATE ###
-  EBLaunchTemplate:
-    Type: AWS::EC2::LaunchTemplate
+  # S3 Bucket
+  LKS_S3_Bucket:
+    Type: AWS::S3::Bucket
+    DeletionPolicy: Retain  
+    UpdateReplacePolicy: Retain
+
+  # IAM Role for Lambda
+  BucketCleanupLambdaRole:
+    Type: AWS::IAM::Role
     Properties:
-      LaunchTemplateName: lks-launch-template
-      LaunchTemplateData:
-        ImageId: ami-06b21ccaeff8cd686
-        InstanceType: t2.micro 
-        KeyName: virginia-key
-        SecurityGroupIds:
-          - !Ref FrontendSecurityGroup
-        TagSpecifications:
-          - ResourceType: instance
-            Tags:
-              - Key: LKS
-                Value: !Sub ${EnvironmentName} Instance
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: S3BucketCleanupPolicy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - s3:ListBucket
+                  - s3:DeleteObject
+                Resource:
+                  - !GetAtt MyS3Bucket.Arn
+                  - !Sub "${MyS3Bucket.Arn}/*"
+
+  # Lambda Function to clean up the bucket
+  BucketCleanupLambda:
+    Type: AWS::Lambda::Function
+    Properties:
+      Handler: index.handler
+      Role: !GetAtt BucketCleanupLambdaRole.Arn
+      Code:
+        ZipFile: |
+          import boto3
+          import cfnresponse
+          import os
+
+          def handler(event, context):
+              s3 = boto3.resource('s3')
+              bucket_name = event['ResourceProperties']['BucketName']
+
+              if event['RequestType'] == 'Delete':
+                  bucket = s3.Bucket(bucket_name)
+                  bucket.objects.all().delete()
+              
+              cfnresponse.send(event, context, cfnresponse.SUCCESS, {})
+
+      Runtime: python3.8
+      Timeout: 30
+
+  # Custom resource to trigger the Lambda
+  BucketCleanupTrigger:
+    Type: Custom::S3BucketCleanup
+    Properties:
+      ServiceToken: !GetAtt BucketCleanupLambda.Arn
+      BucketName: !Ref MyS3Bucket
