@@ -1,9 +1,9 @@
 version: 0.2
 env:
   variables:
-    ECR_REPO: 834549009763.dkr.ecr.us-east-1.amazonaws.com/lks-catalog/bebyschalke
+    ECR_REPO: 834549009763.dkr.ecr.us-east-1.amazonaws.com/lks/schalke
     ECR_REGION: us-east-1
-    CONTAINER_NAME: bebyschalke
+    CONTAINER_NAME: schalke
 
   parameter-store:
     AWS_ACCESS_KEY: /course-catalog/production/AWS_ACCESS_KEY
@@ -27,21 +27,16 @@ phases:
       - aws ecr get-login-password --region $ECR_REGION | docker login --username AWS --password-stdin 834549009763.dkr.ecr.us-east-1.amazonaws.com || echo "ECR login failed"
       - echo "Logging into Docker Hub..."
       - echo $DOCKER_PASSWORD | docker login --username $DOCKER_USERNAME --password-stdin
-      - echo "Creating S3 bucket to store dkcfg to be deployed by Beanstalk..."
-      - aws s3 mb s3://$AWS_BUCKET_NAME || echo "Bucket already exist or failed to create"
-      - aws s3 cp dkcfg s3://$AWS_BUCKET_NAME || echo "Failed to upload dkcfg"
-      - aws s3 cp Dockerrun.aws.json s3://$AWS_BUCKET_NAME || echo "Failed to upload Dockerrun.aws.json"
-
   build:
     commands:
       - echo "Building docker images..."
-      - docker build -t lks-catalog/bebyschalke:latest .
+      - docker build -t lks/schalke .
 
   post_build:
     commands:
       - echo "Pushing the image to ECR..."
-      - docker tag lks-catalog/bebyschalke:latest 834549009763.dkr.ecr.us-east-1.amazonaws.com/lks-catalog/bebyschalke:latest || echo "Failed to tag Docker image"
-      - docker push 834549009763.dkr.ecr.us-east-1.amazonaws.com/lks-catalog/bebyschalke:latest || { echo "Failed to push Docker image to ECR"; exit 1; }
+      - docker tag lks/schalke:latest 834549009763.dkr.ecr.us-east-1.amazonaws.com/lks/schalke:latest || echo "Failed to tag Docker image"
+      - docker push 834549009763.dkr.ecr.us-east-1.amazonaws.com/lks/schalke:latest || { echo "Failed to push Docker image to ECR"; exit 1; }
       - echo "Image has been pushed into ECR..."
       - printf '[{"name":"%s","imageUri":"%s "}]' $CONTAINER_NAME ${ECR_REPO}:latest > imagedefinitions.json
       - echo "Build complete."
