@@ -302,6 +302,8 @@ Resources:
     Type: AWS::S3::Bucket
     DeletionPolicy: Retain  
     UpdateReplacePolicy: Retain
+    Properties:
+      BucketName: lks-smknega-schalke
 
   ### IAM Role for Lambda ###
   BucketCleanupLambdaRole:
