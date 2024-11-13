@@ -300,7 +300,6 @@ Resources:
   ### S3 Bucket ###
   LKSS3Bucket:
     Type: AWS::S3::Bucket
-    DeletionPolicy: Retain  
     UpdateReplacePolicy: Retain
     Properties:
       BucketName: lks-smknega-schalke
