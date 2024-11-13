@@ -297,13 +297,13 @@ Resources:
         - !Ref PrivateRouteTable2
       VpcEndpointType: Gateway
 
-  # S3 Bucket
-  LKS_S3_Bucket:
+  ### S3 Bucket ###
+  LKSS3Bucket:
     Type: AWS::S3::Bucket
     DeletionPolicy: Retain  
     UpdateReplacePolicy: Retain
 
-  # IAM Role for Lambda
+  ### IAM Role for Lambda ###
   BucketCleanupLambdaRole:
     Type: AWS::IAM::Role
     Properties:
@@ -327,7 +327,7 @@ Resources:
                   - !GetAtt MyS3Bucket.Arn
                   - !Sub "${MyS3Bucket.Arn}/*"
 
-  # Lambda Function to clean up the bucket
+  ### Lambda Function to clean up the bucket ###
   BucketCleanupLambda:
     Type: AWS::Lambda::Function
     Properties:
@@ -352,9 +352,9 @@ Resources:
       Runtime: python3.8
       Timeout: 30
 
-  # Custom resource to trigger the Lambda
+  ### Custom resource to trigger the Lambda ###
   BucketCleanupTrigger:
     Type: Custom::S3BucketCleanup
     Properties:
       ServiceToken: !GetAtt BucketCleanupLambda.Arn
-      BucketName: !Ref LKS_S3_Bucket
+      BucketName: !Ref LKSS3Bucket
