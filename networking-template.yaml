@@ -324,8 +324,8 @@ Resources:
                   - s3:ListBucket
                   - s3:DeleteObject
                 Resource:
-                  - !GetAtt MyS3Bucket.Arn
-                  - !Sub "${MyS3Bucket.Arn}/*"
+                  - !GetAtt LKSS3Bucket.Arn
+                  - !Sub "${LKSS3Bucket.Arn}/*"
 
   ### Lambda Function to clean up the bucket ###
   BucketCleanupLambda:
