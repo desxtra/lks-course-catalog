@@ -5,12 +5,12 @@
       "Key": "dkcfg"
    },
    "Image": {
-      "Name": "834549009763.dkr.ecr.us-east-1.amazonaws.com/lks-catalog/bebyschalke:latest"
+      "Name": "834549009763.dkr.ecr.us-east-1.amazonaws.com/lks/schalke:latest"
    },
    "Ports": [
       {
          "ContainerPort": 8000,
-         "HostPort": 80
+         "HostPort": 8080
     
       }
    ]
