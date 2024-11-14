@@ -28,7 +28,7 @@ phases:
       - echo "Logging into Docker Hub..."
       - echo $DOCKER_PASSWORD | docker login --username $DOCKER_USERNAME --password-stdin
       - echo "Uploading Dockerrun.aws.json into S3 bucket"
-      - aws s3 cp Dockerrun.aws.json s3://pipeline-bucket-smknega/EB/
+      - aws s3 cp Dockerrun.aws.json s3://pipeline-bucket-smknega/EB/EB_Catalog/
   build:
     commands:
       - echo "Building docker images..."
