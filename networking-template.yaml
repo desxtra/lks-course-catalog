@@ -359,3 +359,66 @@ Resources:
     Properties:
       ServiceToken: !GetAtt BucketCleanupLambda.Arn
       BucketName: !Ref LKSS3Bucket
+
+    ### Additional S3 Bucket for Pipeline ###
+  LKSPipelineBucket:
+    Type: AWS::S3::Bucket
+    UpdateReplacePolicy: Retain
+    Properties:
+      BucketName: pipeline-bucket-smknega
+
+  ### IAM Role for Pipeline Bucket Lambda Cleanup ###
+  PipelineBucketCleanupLambdaRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: PipelineS3BucketCleanupPolicy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - s3:ListBucket
+                  - s3:DeleteObject
+                Resource:
+                  - !GetAtt LKSPipelineBucket.Arn
+                  - !Sub "${LKSPipelineBucket.Arn}/*"
+
+  ### Lambda Function to clean up the Pipeline bucket ###
+  PipelineBucketCleanupLambda:
+    Type: AWS::Lambda::Function
+    Properties:
+      Handler: index.handler
+      Role: !GetAtt PipelineBucketCleanupLambdaRole.Arn
+      Code:
+        ZipFile: |
+          import boto3
+          import cfnresponse
+          import os
+
+          def handler(event, context):
+              s3 = boto3.resource('s3')
+              bucket_name = event['ResourceProperties']['BucketName']
+
+              if event['RequestType'] == 'Delete':
+                  bucket = s3.Bucket(bucket_name)
+                  bucket.objects.all().delete()
+              
+              cfnresponse.send(event, context, cfnresponse.SUCCESS, {})
+
+      Runtime: python3.8
+      Timeout: 30
+
+  ### Custom resource to trigger the Lambda for Pipeline Bucket ###
+  PipelineBucketCleanupTrigger:
+    Type: Custom::S3BucketCleanup
+    Properties:
+      ServiceToken: !GetAtt PipelineBucketCleanupLambda.Arn
+      BucketName: !Ref LKSPipelineBucket
