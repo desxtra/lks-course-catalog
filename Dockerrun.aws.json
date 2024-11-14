@@ -1,5 +1,4 @@
 {
-   "AWSEBDockerrunVersion": "1",
    "Authentication": {
       "Bucket": "pipeline-bucket-smknega",
       "Key": "dkcfg"
@@ -11,7 +10,6 @@
       {
          "ContainerPort": 8000,
          "HostPort": 8080
-    
       }
    ]
 }
